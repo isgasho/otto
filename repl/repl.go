@@ -64,6 +64,10 @@ type Options struct {
 	// enabled. The way autocomplete is implemented can incur a performance
 	// penalty, so it's turned off by default.
 	Autocomplete bool
+	// ProcessResult is provided the result of otto's evaluation and formats
+	// it for the user or takes some other action.
+	// By default, it prints the JS value's string representation.
+	ProcessResult func(otto.Value) string
 }
 
 // RunWithOptions runs a REPL with the given options.
@@ -79,6 +83,14 @@ func RunWithOptions(vm *otto.Otto, options Options) error {
 
 	if options.Autocomplete {
 		c.AutoComplete = &autoCompleter{vm}
+	}
+
+	processResult := options.ProcessResult
+	if processResult == nil {
+		processResult = otto.Value.String
+		// processResult = func(v otto.Value) string {
+		// 	return v.String()
+		// }
 	}
 
 	rl, err := readline.NewEx(c)
@@ -138,15 +150,7 @@ func RunWithOptions(vm *otto.Otto, options Options) error {
 					io.Copy(rl.Stdout(), strings.NewReader(err.Error()))
 				}
 			} else {
-				goVal, err := v.Export()
-				if err == nil {
-					// if goVal, ok := goVal.(fmt.Stringer); ok {
-					rl.Stdout().Write([]byte(fmt.Sprintln(goVal)))
-					// }
-				} else {
-					fmt.Println(err)
-					rl.Stdout().Write([]byte(v.String() + "\n"))
-				}
+				rl.Stdout().Write([]byte(processResult(v) + "\n"))
 			}
 		}
 
