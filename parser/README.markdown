@@ -1,11 +1,11 @@
 # parser
 --
-    import "github.com/robertkrimen/otto/parser"
+    import "github.com/robfig/otto/parser"
 
 Package parser implements a parser for JavaScript.
 
     import (
-        "github.com/robertkrimen/otto/parser"
+        "github.com/robfig/otto/parser"
     )
 
 Parse and return an AST
@@ -187,4 +187,4 @@ const (
 ```
 
 --
-**godocdown** http://github.com/robertkrimen/godocdown
+**godocdown** http://github.com/robfig/godocdown

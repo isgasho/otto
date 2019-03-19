@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/robertkrimen/otto"
+	"github.com/robfig/otto"
 	readline "gopkg.in/readline.v1"
 )
 
@@ -138,11 +138,13 @@ func RunWithOptions(vm *otto.Otto, options Options) error {
 					io.Copy(rl.Stdout(), strings.NewReader(err.Error()))
 				}
 			} else {
-				if goVal, err := v.Export(); err == nil {
-					if goVal, ok := goVal.(fmt.Stringer); ok {
-						rl.Stdout().Write([]byte(goVal.String() + "\n"))
-					}
+				goVal, err := v.Export()
+				if err == nil {
+					// if goVal, ok := goVal.(fmt.Stringer); ok {
+					rl.Stdout().Write([]byte(fmt.Sprintln(goVal)))
+					// }
 				} else {
+					fmt.Println(err)
 					rl.Stdout().Write([]byte(v.String() + "\n"))
 				}
 			}
