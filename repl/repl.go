@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/robertkrimen/otto"
-	"gopkg.in/readline.v1"
+	readline "gopkg.in/readline.v1"
 )
 
 var counter uint32
@@ -138,7 +138,13 @@ func RunWithOptions(vm *otto.Otto, options Options) error {
 					io.Copy(rl.Stdout(), strings.NewReader(err.Error()))
 				}
 			} else {
-				rl.Stdout().Write([]byte(v.String() + "\n"))
+				if goVal, err := v.Export(); err == nil {
+					if goVal, ok := goVal.(fmt.Stringer); ok {
+						rl.Stdout().Write([]byte(goVal.String() + "\n"))
+					}
+				} else {
+					rl.Stdout().Write([]byte(v.String() + "\n"))
+				}
 			}
 		}
 
