@@ -15,7 +15,6 @@ var lastExpressionRegex = regexp.MustCompile(`[a-zA-Z0-9]([a-zA-Z0-9\.]*[a-zA-Z0
 
 func (a *autoCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	lastExpression := lastExpressionRegex.FindString(string(line))
-
 	bits := strings.Split(lastExpression, ".")
 
 	first := bits[:len(bits)-1]

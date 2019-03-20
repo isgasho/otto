@@ -64,6 +64,8 @@ type Options struct {
 	// enabled. The way autocomplete is implemented can incur a performance
 	// penalty, so it's turned off by default.
 	Autocomplete bool
+	// (TEMPORARY) Allow folks to override the specific autocompleter
+	Autocompleter readline.AutoCompleter
 	// ProcessResult is provided the result of otto's evaluation and formats
 	// it for the user or takes some other action.
 	// By default, it prints the JS value's string representation.
@@ -81,7 +83,9 @@ func RunWithOptions(vm *otto.Otto, options Options) error {
 		Prompt: prompt,
 	}
 
-	if options.Autocomplete {
+	if options.Autocompleter != nil {
+		c.AutoComplete = options.Autocompleter
+	} else if options.Autocomplete {
 		c.AutoComplete = &autoCompleter{vm}
 	}
 
